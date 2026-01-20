@@ -19,7 +19,6 @@ void UGameStateMainHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDe
 	if (!CachedGameState.IsValid())
 	{
 		CachedGameState = Cast<ATestGameState>(UGameplayStatics::GetGameState(this));
-
 	}
 
 	UpdateTimeDisplay();

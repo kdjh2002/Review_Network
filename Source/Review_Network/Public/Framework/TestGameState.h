@@ -25,11 +25,13 @@ protected:
 public:
 	//Getter함수
 	inline float GetGameElapsedTime() const { return GameElapsedTime; }
+	inline float IsGameOver() const { return bGameOver; }
 
 protected:
 	//서버 값이 클라이언트로 자동 동기화됨
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Game Data")
-	float GameElapsedTime = 60.0f;	//게임시간
+	float GameElapsedTime = 10.0f;	//게임시간
 
-
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Game Data")
+	bool bGameOver = false;
 };

@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "GameStateMainHUDWidget.generated.h"
 
+class UTextBlock;
 /**
  * 
  */
@@ -16,13 +17,21 @@ class REVIEW_NETWORK_API UGameStateMainHUDWidget : public UUserWidget
 
 
 protected:
+	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	
 	UFUNCTION(BlueprintCallable, Category = "Game Data")
 	void UpdateTimeDisplay();	//시간갱신함수
 
+	UFUNCTION(BlueprintCallable, Category = "Game Data")
+	void UpdateGameOverDisplay();
+
 protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
-	TObjectPtr<class UTextBlock> TimeText = nullptr;
+	TObjectPtr<UTextBlock> TimeText = nullptr;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	TObjectPtr<UTextBlock> GameOverText = nullptr;
 
 private:
 	TWeakObjectPtr<class ATestGameState> CachedGameState = nullptr;

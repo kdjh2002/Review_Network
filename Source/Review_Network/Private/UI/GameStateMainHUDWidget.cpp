@@ -2,7 +2,9 @@
 
 
 #include "UI/GameStateMainHUDWidget.h"
+#include "UI/ScoreHudWidget.h"
 #include "Framework/TestGameState.h"
+#include "Framework/NetPlayerState.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/TextBlock.h"
 
@@ -23,6 +25,7 @@ void UGameStateMainHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDe
 
 	UpdateTimeDisplay();
 	UpdateGameOverDisplay();
+	UpdateScoreDisplay();
 }
 
 void UGameStateMainHUDWidget::UpdateTimeDisplay()
@@ -49,5 +52,33 @@ void UGameStateMainHUDWidget::UpdateGameOverDisplay()
 	else
 	{
 		GameOverText->SetVisibility(ESlateVisibility::Hidden);	//처음엔 가려두기
+	}
+}
+
+void UGameStateMainHUDWidget::UpdateScoreDisplay()
+{
+	for (APlayerState* PS : CachedGameState->PlayerArray)
+	{
+		ANetPlayerState* NetPS = Cast<ANetPlayerState>(PS);
+
+		if (NetPS)
+		{
+			if (NetPS == GetOwningPlayerState())
+			{
+				if (MyScore)
+				{
+					MyScore->UpdateName(FText::FromString(TEXT("ME")));
+					MyScore->UpdateIntValue(NetPS->MyScore);
+				}
+			}
+			else
+			{
+				if (EnemyScore)
+				{
+					EnemyScore->UpdateName(FText::FromString(TEXT("ENEMY")));
+					EnemyScore->UpdateIntValue(NetPS->MyScore);
+				}
+			}
+		}
 	}
 }

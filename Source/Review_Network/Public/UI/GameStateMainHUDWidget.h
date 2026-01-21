@@ -7,6 +7,7 @@
 #include "GameStateMainHUDWidget.generated.h"
 
 class UTextBlock;
+class UScoreHudWidget;
 /**
  * 
  */
@@ -26,12 +27,21 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Game Data")
 	void UpdateGameOverDisplay();
 
+public:
+	void UpdateScoreDisplay();
+
 protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<UTextBlock> TimeText = nullptr;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<UTextBlock> GameOverText = nullptr;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	TObjectPtr<UScoreHudWidget> MyScore = nullptr;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	TObjectPtr<UScoreHudWidget> EnemyScore = nullptr;
 
 private:
 	TWeakObjectPtr<class ATestGameState> CachedGameState = nullptr;

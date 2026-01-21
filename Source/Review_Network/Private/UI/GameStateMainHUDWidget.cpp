@@ -7,11 +7,17 @@
 #include "Framework/NetPlayerState.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/TextBlock.h"
+#include "Components/Image.h"
+#include "Components/Button.h"
 
 void UGameStateMainHUDWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+
 	GameOverText->SetVisibility(ESlateVisibility::Hidden);	//처음엔 가려두기
+	GameOverBackground->SetVisibility(ESlateVisibility::Hidden);	//처음엔 가려두기
+	ReplayButton->SetVisibility(ESlateVisibility::Hidden);	//처음엔 가려두기
+
 }
 
 void UGameStateMainHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -47,25 +53,68 @@ void UGameStateMainHUDWidget::UpdateGameOverDisplay()
 	if (CachedGameState->IsGameOver())
 	{
 		GameOverText->SetVisibility(ESlateVisibility::HitTestInvisible);
+		GameOverBackground->SetVisibility(ESlateVisibility::HitTestInvisible);
+		ReplayButton->SetVisibility(ESlateVisibility::Visible);
+
+		int32 MyPoint = 0;
+		int32 EnemyPoint = 0;
+
+		//점수 가져오기
+		for (APlayerState* PS : CachedGameState->PlayerArray)
+		{
+			ANetPlayerState* NetPS = Cast<ANetPlayerState>(PS);
+			if (NetPS)
+			{
+				if (NetPS == GetOwningPlayerState())
+				{
+					MyPoint = NetPS->MyScore;
+				}
+				else
+				{
+					EnemyPoint = NetPS->MyScore;
+				}
+			}
+		}
+
+		//승패 비교하기
+		if (MyPoint > EnemyPoint)
+		{
+			GameOverText->SetText(FText::FromString(TEXT("YOU WIN!!")));
+			GameOverText->SetColorAndOpacity(FLinearColor::Green);
+		}
+		else if (MyPoint < EnemyPoint)
+		{
+			GameOverText->SetText(FText::FromString(TEXT("YOU Lose...")));
+			GameOverText->SetColorAndOpacity(FLinearColor::Red);
+		}
+		else
+		{
+			GameOverText->SetText(FText::FromString(TEXT("Tie")));
+			GameOverText->SetColorAndOpacity(FLinearColor::Yellow);
+		}
 
 	}
 	else
 	{
 		GameOverText->SetVisibility(ESlateVisibility::Hidden);	//처음엔 가려두기
+		GameOverBackground->SetVisibility(ESlateVisibility::Hidden);	//처음엔 가려두기
+		ReplayButton->SetVisibility(ESlateVisibility::Hidden);	//처음엔 가려두기
+
 	}
 }
 
 void UGameStateMainHUDWidget::UpdateScoreDisplay()
 {
+	// GameState에는 현재 접속한 플레이어 목록(PlayerArray)이 있습
 	for (APlayerState* PS : CachedGameState->PlayerArray)
 	{
 		ANetPlayerState* NetPS = Cast<ANetPlayerState>(PS);
 
 		if (NetPS)
 		{
-			if (NetPS == GetOwningPlayerState())
+			if (NetPS == GetOwningPlayerState())	//자기자신인지 //로컬플레이어
 			{
-				if (MyScore)
+				if (MyScore)	//내점수
 				{
 					MyScore->UpdateName(FText::FromString(TEXT("ME")));
 					MyScore->UpdateIntValue(NetPS->MyScore);
@@ -73,7 +122,7 @@ void UGameStateMainHUDWidget::UpdateScoreDisplay()
 			}
 			else
 			{
-				if (EnemyScore)
+				if (EnemyScore)	//적 점수
 				{
 					EnemyScore->UpdateName(FText::FromString(TEXT("ENEMY")));
 					EnemyScore->UpdateIntValue(NetPS->MyScore);

@@ -8,6 +8,8 @@
 
 class UTextBlock;
 class UScoreHudWidget;
+class UImage;
+class UButton;
 /**
  * 
  */
@@ -42,6 +44,12 @@ protected:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<UScoreHudWidget> EnemyScore = nullptr;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	TObjectPtr<UImage> GameOverBackground = nullptr;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	TObjectPtr<UButton> ReplayButton = nullptr;
 
 private:
 	TWeakObjectPtr<class ATestGameState> CachedGameState = nullptr;
